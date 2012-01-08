@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Yapa Stream</string>
+    <string name="btnSave">Save</string>
+    <string name="btnCancel">Cancel</string>
+    <string name="tvServer">Server:</string>
+    <string name="tvPort">Port:</string>
+    <string name="tvSignupUsername">Username:</string>
+    <string name="tvFpUsername">Username:</string>
+    <string name="tvUsername">Username:</string>
+    <string name="tvPassword">Password:</string>
+    <string name="tvSignupPassword">Password:</string>
+    <string name="tvSignupConfirmPassword">Confirm password:</string>
+    <string name="tvSignupEmail">Email:</string>  
+    <string name="btnSignupSubmit">Submit</string>
+    <string name="btnSignupCancel">Cancel</string>
+    <string name="btnFpSubmit">Submit</string>
+    <string name="btnFpCancel">Cancel</string>
+    <string name="btnFpRecover">Recover</string>
+    <string name="btnFpReenter">Reenter</string>
+    <string name="btnSignup">Signup</string>
+    <string name="btnLogin">Login</string>
+    <string name="btnSettings">Settings</string>
+    <string name="btnSettingsSave">Save</string>
+    <string name="btnSettingsCancel">Cancel</string>
+    <string name="btnLogout">Logout</string>
+    <string name="etUsername"></string>
+    <string name="etFpUsername"></string>
+    <string name="etPassword"></string>
+    <string name="tvWebAddress">Web address:</string>
+    <string name="etWebAddress">yapastream.com</string>
+    <string name="tvServerPort">Server port:</string>
+    <string name="etServerPort" >10083</string>
+    <string name="etSignupUsername"></string>
+    <string name="etSignupPassword"></string>
+    <string name="etSignupConfirmPassword"></string>
+    <string name="tvPrivacy">Privacy:</string>
+    <string name="etConfirmPassword"></string>
+    <string name="etSignupEmail"></string>
+    <string name="tvVideoQuality">Video Quality:</string>
+    <string name="tvAudio">Audio</string>
+    <string name="tbEnabled">Enabled</string>
+	<string name="tbDisabled">Disabled</string>
+    <string name="spinVideoQualityChoose">Choose Video Quality</string>
+    <string-array name="spinVideoQuality">
+    	<item>High</item>
+    	<item>Low</item>
+    </string-array>
+    <string name="spinPrivacyChoose">Choose Privacy Settings</string>
+    <string-array name="spinPrivacy">
+    	<item>Broadcast</item>
+    	<item>Public</item>
+    	<item>Private</item>
+    </string-array>
+    <string name="tvFpInformation">An e-mail will be sent to you shortly containing a link to reset your password.</string>
+</resources>

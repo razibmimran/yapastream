@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 	xmlns:android="http://schemas.android.com/apk/res/android"
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent">
+					
+	<RelativeLayout android:id="@+id/camera_layout"
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent">
+					
+		<SurfaceView 	xmlns:android="http://schemas.android.com/apk/res/android"
+						android:id="@+id/surface_camera"
+						android:layout_width="fill_parent"
+						android:layout_height="fill_parent"
+						android:layout_gravity="center">
+		</SurfaceView>
+	</RelativeLayout>
+	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+					android:id="@+id/login_layout"
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent">
+					
+	    <TextView 	android:id="@+id/tvUsername" 
+	    			android:layout_width="wrap_content" 
+	    			android:layout_height="wrap_content" 
+	    			android:text="@string/tvUsername">
+	    </TextView>
+	    <EditText	android:id="@+id/etUsername"
+	    			android:layout_width="fill_parent"
+	    			android:text="@string/etUsername"
+	    			android:singleLine="true"
+	    			android:layout_height="wrap_content"
+	    			android:layout_below="@+id/tvUsername"
+	    			>	    
+	    </EditText>
+	    
+	    <TextView 	android:id="@+id/tvPassword" 
+	    			android:layout_width="wrap_content" 
+	    			android:layout_height="wrap_content" 
+	    			android:text="@string/tvPassword"
+	    			android:layout_below="@+id/etUsername">
+	    </TextView>
+	    <EditText	android:id="@+id/etPassword"
+	    			android:layout_width="fill_parent"
+	    			android:text="@string/etPassword"
+	    			android:singleLine="true"
+	    			android:password="true"
+	    			android:layout_height="wrap_content"
+	    			android:layout_below="@+id/tvPassword"
+	    			>	    
+	    </EditText>
+	    
+	 
+	    <LinearLayout	android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_alignParentBottom="true">
+	    <Button 	android:text="@string/btnLogin" 
+	    			android:id="@+id/btnLogin" 
+	    			android:layout_width="wrap_content" 
+	    			android:layout_height="wrap_content" 
+	    			android:layout_weight=".33">
+	    </Button>
+	    
+	    <Button 	android:text="@string/btnSignup" 
+	    			android:id="@+id/btnSignup" 
+	    			android:layout_width="wrap_content" 
+	    			android:layout_height="wrap_content"
+	    			android:layout_weight=".33"
+	    			android:layout_toRightOf="@+id/btnLogin" >
+	    </Button>
+	      <Button 	android:text="@string/btnSettings" 
+	    			android:id="@+id/btnSettings" 
+	    			android:layout_width="wrap_content" 
+	    			android:layout_height="wrap_content"
+	    			android:layout_weight=".33"
+	    			android:layout_toRightOf="@+id/btnSignup" >
+	    </Button>
+	    
+	    </LinearLayout>
+	</RelativeLayout>	  
+	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+					android:id="@+id/settings_layout"
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent">
+					 
+		<TextView 	android:id="@+id/tvWebAddress" 
+	    			android:layout_width="fill_parent" 
+	    			android:layout_height="wrap_content" 
+	    			android:text="@string/tvWebAddress"	  
+	    			android:paddingRight="150px"
+	    			>
+	    </TextView>		 
+	    
+	     <EditText	android:id="@+id/etWebAddress" 
+	    			android:layout_width="fill_parent"
+	    			android:text="@string/etWebAddress" 
+	    			android:singleLine="true"
+	    			android:layout_height="wrap_content"
+	    			android:layout_below="@id/tvWebAddress"
+	    			>	    
+	    </EditText>
+	    
+	    <TextView 	android:id="@+id/tvVideoQuality" 
+	    			android:layout_width="wrap_content" 
+	    			android:layout_height="wrap_content" 
+	    			android:text="@string/tvVideoQuality"
+	    			android:layout_below="@id/etWebAddress" 
+	    			>
+	    </TextView>
+	    
+	    
+	    <Spinner	android:id="@+id/spinVideoQuality"
+	    			android:layout_width="wrap_content"
+	    			android:layout_height="wrap_content"
+	    			android:layout_below="@+id/tvVideoQuality"
+	    			android:prompt="@string/spinVideoQualityChoose"
+	    			>	    
+	    </Spinner>
+	    
+	    <ToggleButton android:id="@+id/tbAudio"
+	    			android:layout_width="wrap_content"
+	    			android:layout_height="wrap_content"
+	    			android:textOn="@string/tvAudio"
+	    			android:textOff="@string/tvAudio"
+	    			android:layout_below="@+id/tvVideoQuality"
+	    			android:layout_toRightOf="@id/spinVideoQuality"
+	    			android:layout_marginLeft="40px"
+	    			>
+	    </ToggleButton>
+	    
+	    <TextView 	android:id="@+id/tvPrivacy"
+	    			android:layout_width="wrap_content" 
+	    			android:layout_height="wrap_content" 
+	    			android:text="@string/tvPrivacy"
+	    			android:layout_below="@id/spinVideoQuality"
+	    			>
+	    </TextView>
+	      <Spinner	android:id="@+id/spinPrivacy"
+	    			android:layout_width="wrap_content"
+	    			android:layout_height="wrap_content"
+	    			android:layout_below="@id/tvPrivacy"
+	    			android:prompt="@string/spinPrivacyChoose"
+	    			>	    
+	    </Spinner>
+	    
+	  <LinearLayout	android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_alignParentBottom="true">
+	    <Button 	android:text="@string/btnSettingsSave" 
+	    			android:id="@+id/btnSettingsSave" 
+	    			android:layout_width="wrap_content" 
+	    			android:layout_height="wrap_content" 
+	    			android:layout_weight="1">
+	    </Button>
+	    
+	    
+	    </LinearLayout>
+	</RelativeLayout>	 
+	  
+	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+					android:id="@+id/signup_layout"
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent">
+					
+	    <TextView 	android:id="@+id/tvSignupUsername" 
+	    			android:layout_width="wrap_content" 
+	    			android:layout_height="wrap_content" 
+	    			android:text="@string/tvSignupUsername">
+	    </TextView>
+	    <EditText	android:id="@+id/etSignupUsername"
+	    			android:layout_width="wrap_content"
+	    			android:text="@string/etSignupUsername"
+	    			android:singleLine="true"
+	    			android:layout_height="wrap_content"
+	    			android:layout_below="@+id/tvSignupUsername"
+	    			android:paddingRight="200px"
+	    			android:nextFocusDown="@+id/etSignupPassword"
+	    			>	    
+	    </EditText>
+	    
+	    <TextView 	android:id="@+id/tvSignupPassword" 
+	    			android:layout_width="wrap_content" 
+	    			android:layout_height="wrap_content" 
+	    			android:text="@string/tvPassword"
+	    			android:layout_below="@+id/etSignupUsername"
+	    			android:paddingRight="150px"
+	    			>
+	    </TextView>
+	    <EditText	android:id="@+id/etSignupPassword"
+	    			android:layout_width="wrap_content"
+	    			android:text="@string/etSignupPassword"
+	    			android:singleLine="true"
+	    			android:password="true"
+	    			android:layout_height="wrap_content"
+	    			android:layout_below="@+id/tvSignupPassword"
+	    			android:paddingLeft="150px"
+	    			android:nextFocusDown="@+id/etSignupConfirmPassword"
+	    			
+	    			>	    
+	    </EditText>
+	    
+	     <TextView 	android:id="@+id/tvSignupConfirmPassword" 
+	    			android:layout_width="wrap_content" 
+	    			android:layout_height="wrap_content" 
+	    			android:text="@string/tvSignupConfirmPassword"
+	    			android:layout_toRightOf="@+id/tvSignupPassword"
+	    			android:layout_below="@+id/etSignupUsername"
+	    			
+	    			
+	    			>
+	    </TextView>
+	    <EditText	android:id="@+id/etSignupConfirmPassword"
+	    			android:layout_width="wrap_content"
+	    			android:layout_height="wrap_content"
+	    			android:text="@string/etSignupConfirmPassword"
+	    			android:singleLine="true"
+	    			android:password="true"
+	    			android:layout_toRightOf="@+id/etSignupPassword"
+	    			android:layout_below="@+id/tvSignupConfirmPassword"
+	    			android:layout_marginLeft="40px"
+	    			android:paddingLeft="150px"
+	    			android:nextFocusDown="@+id/etSignupEmail"
+	    			>	    
+	    </EditText>
+	   
+	     <TextView 	android:id="@+id/tvSignupEmail" 
+	    			android:layout_width="wrap_content" 
+	    			android:layout_height="wrap_content" 
+	    			android:text="@string/tvSignupEmail"
+	    			android:layout_below="@+id/etSignupPassword">
+	    </TextView>
+	    <EditText	android:id="@+id/etSignupEmail"
+	    			android:layout_width="fill_parent"
+	    			android:text="@string/etSignupEmail"
+	    			android:singleLine="true"
+	    			android:layout_height="wrap_content"
+	    			android:layout_below="@+id/tvSignupEmail"
+	    			>	    
+	    </EditText>
+	    <LinearLayout	android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_alignParentBottom="true">
+	    <Button 	android:text="@string/btnSignupSubmit" 
+	    			android:id="@+id/btnSignupSubmit" 
+	    			android:layout_width="wrap_content" 
+	    			android:layout_height="wrap_content" 
+	    			android:layout_weight=".50">
+	    </Button>
+	    
+	    <Button 	android:text="@string/btnSignupCancel" 
+	    			android:id="@+id/btnSignupCancel" 
+	    			android:layout_width="wrap_content" 
+	    			android:layout_height="wrap_content"
+	    			android:layout_weight=".50"
+	    			android:layout_toRightOf="@+id/btnSignupSubmit" >
+	    </Button>
+	    
+	    </LinearLayout>
+	</RelativeLayout>	   
+	
+		
+	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+					android:id="@+id/forgotpassword_layout"
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent">
+					
+	    <TextView 	android:id="@+id/tvFpUsername" 
+	    			android:layout_width="wrap_content" 
+	    			android:layout_height="wrap_content" 
+	    			android:text="@string/tvFpUsername">
+	    </TextView>
+	    <EditText	android:id="@+id/etFpUsername"
+	    			android:layout_width="fill_parent"
+	    			android:text="@string/etFpUsername"
+	    			android:singleLine="true"
+	    			android:layout_height="wrap_content"
+	    			android:layout_below="@+id/tvFpUsername"
+	    			>	    
+	    </EditText>
+	    
+	    <TextView 	android:id="@+id/tvFpInformation" 
+	    			android:layout_width="wrap_content" 
+	    			android:layout_height="wrap_content" 
+	    			android:text="@string/tvFpInformation"
+	    			android:layout_below="@+id/etFpUsername">
+	    </TextView>
+	    <LinearLayout	android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_alignParentBottom="true">
+	    <Button 	android:text="@string/btnFpSubmit" 
+	    			android:id="@+id/btnFpSubmit" 
+	    			android:layout_width="wrap_content" 
+	    			android:layout_height="wrap_content" 
+	    			android:layout_weight=".50">
+	    </Button>
+	    
+	    <Button 	android:text="@string/btnFpCancel" 
+	    			android:id="@+id/btnFpCancel" 
+	    			android:layout_width="wrap_content" 
+	    			android:layout_height="wrap_content"
+	    			android:layout_weight=".50"
+	    			android:layout_toRightOf="@+id/btnFpSubmit" >
+	    </Button>
+	    
+	    
+	    
+	    </LinearLayout>
+	</RelativeLayout>	   
+</RelativeLayout>
+

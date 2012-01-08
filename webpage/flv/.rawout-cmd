@@ -1,0 +1,13 @@
+/mnt/network/programming/vlc/vlc/linux/cvlc rtsp://yapastream.com/justin --sout='#standard{access=file,mux=raw,dst=stream.raw}'
+/mnt/network/programming/vlc/vlc/linux/cvlc rtsp://yapastream.com/justin --sout='#standard{access=file,mux=raw,dst=/var/www/sites/yapastream/flv/out.raw}' --demux=dump
+ffmpeg -i stream.raw -y -f flv -an justin.flv
+
+
+http://tldp.org/REF/VLC-User-Guide/x1110.html
+VLC debug output shows me that the v4l demuxer grabs the 
+video as "es RV24 352x288". The VLC seems to change the 
+chroma values from RV24 352x288 -> YUY2 352x288 for 
+display purposes.
+
+http://ffmpeg.org/ffmpeg-doc.html
+http://www.videolan.org/doc/streaming-howto/en/ch03.html
