@@ -33,8 +33,8 @@ import java.sql.Statement;
 
 public class SQLDatabase {
 	private static final String URL = "jdbc:mysql://localhost:3306/yapastream";
-	private static final String USER = "yapastream";
-	private static final String PASSWORD = "helic0pt3r!@3";
+	private static final String USER = "root";
+	private static final String PASSWORD = "y@p@str3@m";
 	private static final String DRIVER = "com.mysql.jdbc.Driver";
 	private Connection con = null;
 	public SQLDatabase() {
