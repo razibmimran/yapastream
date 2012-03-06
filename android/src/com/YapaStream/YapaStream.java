@@ -1,23 +1,5 @@
-/*Copyright (c) 2002-2011 "Yapastream,"
-Yapastream [http://yapastream.com]
-
-This file is part of Yapastream.
-
-Yapastream is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.*/
 package com.YapaStream;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -28,7 +10,6 @@ import com.YapaStream.R;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -38,9 +19,11 @@ import android.os.*;
 import android.widget.*;
 import android.util.Log;
 import android.view.*;
-import java.util.StringTokenizer;
+//import java.io.IOException;
+//import android.content.Context;
+//import java.util.StringTokenizer;
 
-public class YapaStream extends Activity {// implements SurfaceHolder.Callback{
+public class YapaStream extends Activity {
 	private SurfaceView surfaceView;
 	private Button loginButton;
 	private Button loginSignup;
@@ -49,7 +32,6 @@ public class YapaStream extends Activity {// implements SurfaceHolder.Callback{
 	private Button signupCancel;
 	private Button fpSubmit;
 	private Button fpCancel;
-	//private Button settingsCancel;
 	private Button settingsSave;
 	private SurfaceHolder sHolder;
 	private PhoneUserP phoneUser;
@@ -66,7 +48,6 @@ public class YapaStream extends Activity {// implements SurfaceHolder.Callback{
 	private int serverPort;
 	private int privacy; // 0=broadcast;1=public,2=private
 	private String webAddress;
-	//http://mindtherobot.com/blog/159/android-guts-intro-to-loopers-and-handlers/
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -80,7 +61,6 @@ public class YapaStream extends Activity {// implements SurfaceHolder.Callback{
 		this.serverAddress = null;
 		this.serverPort = 0;
 		this.phoneUser = new PhoneUserP();
-		//this.protoConn = new ProtocolConnection(this.phoneUser, this.sHolder);
 		this.loginButton = (Button) this.findViewById(R.id.btnLogin);
 		this.loginSignup = (Button) this.findViewById(R.id.btnSignup);
 		this.loginSettings = (Button) this.findViewById(R.id.btnSettings);
@@ -90,7 +70,6 @@ public class YapaStream extends Activity {// implements SurfaceHolder.Callback{
 		this.fpCancel = (Button) this.findViewById(R.id.btnFpCancel);
 		this.settingsSave = (Button) this.findViewById(R.id.btnSettingsSave);
 
-		//this.settingsCancel = (Button) this.findViewById(R.id.btnSettingsCancel);
 		handler = new Handler() {
 				public void handleMessage(Message msg) {
 					// set with 
@@ -144,11 +123,6 @@ public class YapaStream extends Activity {// implements SurfaceHolder.Callback{
 				btnCancel(v);
 			}
 		});
-		/*this.settingsCancel.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) { 
-				btnCancel(v);
-			}
-		});*/
 		this.settingsSave.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) { 
 				btnSettingsSave(v);
@@ -173,9 +147,6 @@ public class YapaStream extends Activity {// implements SurfaceHolder.Callback{
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		//this.alertbox("Test", "Error connecting.");
-		
-		
 	}
 
 	@Override
@@ -187,11 +158,6 @@ public class YapaStream extends Activity {// implements SurfaceHolder.Callback{
 			this.protoConn.end();
 			this.protoConn.stop();
 			this.protoConn = null;
-			//if (this.protoConn.isPlaying() == true) {
-			//	Log.v("S", "PLAYING");
-			//	this.Login(); // this.protoConn.startCamera();
-			//} else {
-			//}
 		} else {
 			Log.v("S", "Stopped");
 			this.hideCamera();
@@ -224,13 +190,7 @@ public class YapaStream extends Activity {// implements SurfaceHolder.Callback{
 	}
 	SurfaceHolder.Callback surfaceCallback = new SurfaceHolder.Callback() {
 		public void surfaceCreated(SurfaceHolder holder) {
-			/*
-			 * if (camera != null) { try { camera.setPreviewDisplay(holder); }
-			 * catch (IOException e) { // TODO Auto-generated catch block
-			 * e.printStackTrace(); } catch (Throwable t) { Log.e("callback",
-			 * "setPreview() exception."); } }
-			 */
-			Display display = ((WindowManager)getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
+			//Display display = ((WindowManager)getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
 			
 			Log.v("S", "Surface created");
 		}
@@ -262,7 +222,6 @@ public class YapaStream extends Activity {// implements SurfaceHolder.Callback{
 	}
 	public boolean onCreateOptionsMenu(Menu menu) {
 		RelativeLayout camera_layout = (RelativeLayout)findViewById(R.id.camera_layout);
-		//menu.add(0, 1, 0, "Start");
 		if (camera_layout.isShown()) menu.add(0, 0, 0, "Logout");
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -270,8 +229,6 @@ public class YapaStream extends Activity {// implements SurfaceHolder.Callback{
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case 0: // stream
-		//	break;
-		//case 1: // options
 			this.Logout();
 			break;
 		}
@@ -461,7 +418,7 @@ public class YapaStream extends Activity {// implements SurfaceHolder.Callback{
 	public void Login() {
 		String username = etUsername.getText().toString();
 		String password = etPassword.getText().toString();
-		boolean aud = this.tbAudio.isChecked();
+		//boolean aud = this.tbAudio.isChecked();
 		int vidQuality = this.spinVideoQuality.getSelectedItemPosition();
 		
 		if ((username.length() > 0) && (password.length() > 0) && (username.matches("[a-zA-Z0-9]*"))) {
@@ -502,8 +459,6 @@ public class YapaStream extends Activity {// implements SurfaceHolder.Callback{
 
 	public void begin() {
 		// Open TCP connection to server
-		//setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-
 		try {
 
 			if (protoConn != null)	{
@@ -513,10 +468,7 @@ public class YapaStream extends Activity {// implements SurfaceHolder.Callback{
 				} else if (this.protoConn.getState() == Thread.State.TERMINATED) {
 					Log.v("S", "Protocol Connection thread resuming");
 					if (this.protoConn != null) this.protoConn.start();
-					
-			//		this.protoConn.run();
 				} else {// else thread is still running
-					
 					Log.v("S", "Protocol Connection thread already running");
 				}
 			} 
@@ -616,12 +568,7 @@ public class YapaStream extends Activity {// implements SurfaceHolder.Callback{
 		URL signupUrl = null;
 		try {
 			signupUrl = new URL("http://" + this.webAddress + "/?signup=1&device=androidapplication&username=" + username + "&password=" + password + "&email=" + email);
-			//Log.v("S", "Opening url:  " + signupUrl);
-			//signupUrl = new URL("http://" + this.httpServerAddress + ":" + this.httpServerPort + "/" + this.httpPath + "?signup=1&device=androidapplication&username=" + username + "&password=" + password + "&email=" + email);
-			//signupUrl = new URL("http://" + this.webAddress + "/?signup=1&device=androidapplication&username=" + username + "&password=" + password + "&email=" + email);
-			
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		if (signupUrl != null) {
@@ -639,56 +586,15 @@ public class YapaStream extends Activity {// implements SurfaceHolder.Callback{
 			        		// set user name and password in login form
 			        		etUsername.setText(username);
 			        		etPassword.setText(password);
-					        //this.alertboxToLogin("Success", "You may now login to yapastream.");
 			        		this.alertboxToLogin(splitInput[1], splitInput[2]);
 			        	} else if (splitInput[0].compareTo("ERROR") == 0) {
-			        		/*int errCode=0;
-			        		errCode = Integer.parseInt(splitInput[1]);
-			        		String errStr;
-			        		switch(errCode) {
-			        			case 544: 
-			        				errStr = "Username is taken";
-			        				break;
-			        			case 547:
-			        				errStr = "Username too short.";
-			        				break;
-			        			case 546:
-			        				errStr = "Username too long.";
-			        				break;
-			        			case 548:
-			        				errStr = "Username contains invalid characters.";
-			        				break;
-			        			case 549:
-			        				errStr = "Username error";
-			        				break;
-			        			case 554:
-			        				errStr = "Password invalid";
-			        				break;
-			        			case 556:
-			        				errStr = "Password too long";
-			        				break;
-			        			case 557:
-			        				errStr = "Password too short";
-			        				break;
-			        			case 558: 
-			        				errStr = "Password contains invalid characters.";
-			        				break;
-			        			case 559:
-			        				errStr = "Password error";
-			        				break;
-			        			default:
-			        				errStr = "Unable to parse responses. Please try again later.";
-			        				break;
-			        		}*/
 					        this.alertboxToSignup(splitInput[2], splitInput[3]);
 			        	}
-			        	  //System.out.println(inputLine);
 			        }
 			          
 			        in.close();
 				}
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -699,10 +605,7 @@ public class YapaStream extends Activity {// implements SurfaceHolder.Callback{
 		URL fpUrl = null;
 		try {
 			fpUrl = new URL("http://" + this.webAddress + "/?forgotpassword=1&device=androidapplication&username=" + username);
-			//fpUrl = new URL("http://" + this.httpServerAddress + ":" + this.httpServerPort + "/" + this.httpPath + "?forgotpassword=1&device=androidapplication&username=" + username);
-			//fpUrl = new URL("http://" + this.webAddress + "/?forgotpassword=1&device=androidapplication&username=" + username);
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		if (fpUrl != null) {
@@ -721,9 +624,8 @@ public class YapaStream extends Activity {// implements SurfaceHolder.Callback{
 			        		etUsername.setText(username);
 			        		etPassword.setText("");
 			        		this.alertboxToLogin(splitInput[1], splitInput[2]);
-					       // this.alertboxToLogin("Success", "An e-mail has been sent to you containing a link to reset your password.");
 			        	} else if (splitInput[0].compareTo("ERROR") == 0) {
-			        		int errCode = 0;
+			        		/*int errCode = 0;
 			        		errCode = Integer.parseInt(splitInput[1]);
 			        		String errStr;
 			        		switch (errCode) {
@@ -734,15 +636,13 @@ public class YapaStream extends Activity {// implements SurfaceHolder.Callback{
 			        			default:
 			        				errStr = "An unknown error has occured.";
 			     
-			        		}
+			        		}*/
 			        		this.alertboxToForgotPassword("Error",  splitInput[3]);
 			        	}
-			        	  //System.out.println(inputLine);
 			        }
 			        in.close();
 				}
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -752,10 +652,7 @@ public class YapaStream extends Activity {// implements SurfaceHolder.Callback{
 		try {
 			Log.v("S", "Loading url " + "http://" + this.webAddress + "/?deviceinfo=1&device=androidapplication");
 			webUrl = new URL("http://" + this.webAddress + "/?deviceinfo=1&device=androidapplication");
-			//fpUrl = new URL("http://" + this.httpServerAddress + ":" + this.httpServerPort + "/" + this.httpPath + "?forgotpassword=1&device=androidapplication&username=" + username);
-			//fpUrl = new URL("http://" + this.webAddress + "/?forgotpassword=1&device=androidapplication&username=" + username);
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		if (webUrl != null) {
@@ -785,61 +682,37 @@ public class YapaStream extends Activity {// implements SurfaceHolder.Callback{
 		        			Log.v("S", "Server address set to " + this.serverAddress);
 		        			Log.v("S", "Server port set to " + this.serverPort);
 			        	} else if (splitInput[0].compareTo("ERROR") == 0) {
-			        		int errCode = 0;
+			        		/*int errCode = 0;
 			        		errCode = Integer.parseInt(splitInput[1]);
 			        		String errStr;
 			        		switch (errCode) {			        	
 			        			default:
 			        				errStr = "An unknown error has occured.";
 			     
-			        		}
+			        		}*/
 			        		this.alertboxToForgotPassword("Error",  splitInput[3]);
 			        	}
-			        	//System.out.println(inputLine);
 			        }
 			        in.close();
 				}
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
-	/*public void openSignup(String username) {
-		Context context = getApplicationContext();  
-		String url = "http://www.yapastream.com/?page=signup&device=androidappbrowser";  
-		if (username != null) {
-			url += "&username=" + username;
-		}
+	public void openHomepage(String username) {
+		//Context context = getApplicationContext();  
+		String url = "http://" + this.webAddress;  
 		Intent i = new Intent(Intent.ACTION_VIEW);   
 		Uri u = Uri.parse(url);   
 		i.setData(u);   
-		try {  
-		  // Start the activity  
+		try {
 		  startActivity(i);  
 		} catch (ActivityNotFoundException e) {  
-		  // Raise on activity not found  
-		  Toast toast = Toast.makeText(context, "Browser not found.", Toast.LENGTH_SHORT);  
+		  //Toast toast = Toast.makeText(context, "Browser not found.", Toast.LENGTH_SHORT);  
 		}  
 	}
-	public void openForgotPassword(String username) {
-		Context context = getApplicationContext();  
-		String url = "http://www.yapastream.com/?page=forgotpassword&device=androidappbrowser";
-		if (username != null) {
-			url += "&username=" + username;
-		}
-		Intent i = new Intent(Intent.ACTION_VIEW);   
-		Uri u = Uri.parse(url);   
-		i.setData(u);   
-		try {  
-		  // Start the activity  
-		  startActivity(i);  
-		} catch (ActivityNotFoundException e) {  
-		  // Raise on activity not found  
-		  Toast toast = Toast.makeText(context, "Browser not found.", Toast.LENGTH_SHORT);  
-		}  
-	}
-	*/
+	
 	protected void alertbox(String title, String msg) {
 		if (msg != null) {
 		   new AlertDialog.Builder(this)

@@ -27,6 +27,10 @@ $result = mysql_query($query);
 if ($row = mysql_fetch_assoc($result)) {
         $password = $row['password'];
 }
+
+//crypt($password, '$6$rounds=5000$thesaltforthepassword$');
+// http://mustafacanturk.com/sha512-hashing-on-java/
+
 $A1 = md5($username . ':' . $realm . ':' . $password);
 $A2 = md5($_SERVER['REQUEST_METHOD'].':'.$data['uri']);
 $valid_response = md5($A1.':'.$data['nonce'].':'.$data['nc'].':'.$data['cnonce'].':'.$data['qop'].':'.$A2);

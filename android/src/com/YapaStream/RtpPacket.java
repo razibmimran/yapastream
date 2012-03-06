@@ -273,9 +273,9 @@ public class RtpPacket {
 	// *********************** Private and Static ***********************
 
 	/** Gets int value */
-	private static int getInt(byte b) {
+	/*private static int getInt(byte b) {
 		return ((int) b + 256) % 256;
-	}
+	}*/
 
 	/** Gets long value */
 	private static long getLong(byte[] data, int begin, int end) {

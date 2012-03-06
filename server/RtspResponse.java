@@ -432,7 +432,7 @@ public class RtspResponse
 		    DateFormat.getDateTimeInstance(DateFormat.LONG,
 		                                   DateFormat.LONG);	
 		String dateOut = formatter.format(today);
-		//String serverIp = new String("97.96.72.164");
+		//String serverIp = new String("your_ip_here");
 		
 		if (this.endReason == null) {	
 			response = Response(200) + rtn +

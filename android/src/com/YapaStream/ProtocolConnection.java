@@ -1,28 +1,9 @@
-/*Copyright (c) 2002-2011 "Yapastream,"
-Yapastream [http://yapastream.com]
-
-This file is part of Yapastream.
-
-Yapastream is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.*/
 package com.YapaStream;
 
 import java.net.*;
-import android.app.AlertDialog;
 import java.io.*;
 
 import android.hardware.Camera;
-import android.hardware.Camera.Parameters;
 import android.media.MediaRecorder;
 import android.net.LocalServerSocket;
 import android.net.LocalSocket;
@@ -33,16 +14,17 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.Display;
-import android.view.Surface;
-import android.view.View;
-import android.view.WindowManager;
-import android.content.Context.*;
-import android.content.*;
 import android.view.SurfaceHolder;
 
-// TCP connection to server for managing RTP UDP streams
+//import android.hardware.Camera.Parameters;
+//import android.view.Surface;
+//import android.view.View;
+//import android.view.WindowManager;
+//import android.content.Context.*;
+//import android.content.*;
+//TCP connection to server for managing RTP UDP streams
 // Spawns 2 threads for sending Audio and Video to Server
-import android.widget.RelativeLayout;
+//import android.widget.RelativeLayout;
 //import android.net.rtp.AudioStream;
 //import android.net.rtp.RtpStream;
 
@@ -62,7 +44,6 @@ public class ProtocolConnection extends Thread {
 	private SurfaceHolder sHolder;
 	private boolean ended;
 	private Handler handler;
-	// from original SecureConn
 	LocalSocket receiver, sender;
 	LocalServerSocket lss;
 	int obuffering;
@@ -117,7 +98,7 @@ public class ProtocolConnection extends Thread {
 				}
 			} else if (this.authenticated == false) {
 				if ((this.authenticate() == 1) && (attempts++ < 10)) {
-					Log.v("S", "authenticated");
+					Log.v("S", "Authenticated");
 
 					attempts = 0;
 					response = new ProtoResponse(input);
@@ -133,16 +114,12 @@ public class ProtocolConnection extends Thread {
 								.getAudioPort());
 						this.phoneUser.setRemoteVideoPort(response
 								.getVideoPort());
-					} else if (response.getStatusCode() == 401) {
-						// unauthorized
+					} else if (response.getStatusCode() == 401) {// unauthorized
 						this.errMsg = "Invalid username and/or password";
 						this.authenticated = false;
-						this.ended = true;						Log.v("S", "Invalid password");
+						this.ended = true;						
+						Log.v("S", "Invalid password");
 						this.alertboxInvalidPassword("Invalid password", "Please reenter the password or recover the password if you have forgotten it.");
-
-						//this.alertboxToLogin("Error", this.errMsg);
-					//	postError(this.errMsg);
-					//	
 					}
 					Log.v("S",
 							"SC: " + Integer.toString(response.getStatusCode())
@@ -160,21 +137,31 @@ public class ProtocolConnection extends Thread {
 				if (response.getStatusCode() == 200) {
 					this.ported = true;
 				}
+				response = null; 
 			} else if (this.setting == false) {
 				this.settings();
 				response = new ProtoResponse(this.input);
 				if (response.getStatusCode() == 200) {
 					this.setting = true;
 				}
+				response = null;
 			} else if (this.playing == false) {
 				this.play();
 				response = new ProtoResponse(this.input);
 				if (response.getStatusCode() == 200) {
+					this.playing = true;
 					this.startCamera();
 					this.beginVideoForward();
 					this.beginAudioForward();
-					this.playing = true;
+				} 
+				response = null;
+			} else { // playing
+				response = new ProtoResponse(this.input);
+				if (response.getPong() == true) { // received 100 PING, send PONG
+					this.pong();
+					Log.d("S","Sent PONG");
 				}
+				response = null;
 			}
 		}
 		Log.v("S", "Ending protocol connection");
@@ -287,7 +274,9 @@ public class ProtocolConnection extends Thread {
 		}
 		return retval;
 	}
-
+	public void pong() {
+		this.sendCommand("PONG");
+	}
 	public void play() {
 		this.sendCommand("PLAY");
 	}
@@ -352,7 +341,6 @@ public class ProtocolConnection extends Thread {
 			this.receiver.close();
 			this.sender.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -376,7 +364,6 @@ public class ProtocolConnection extends Thread {
 				if (this.phoneUser.isVerified() == true) {
 					this.output.println(command + rtn + "Session: "
 							+ this.phoneUser.getSessionId() + rtn);
-
 				} else {
 					// unverified, try verification?, alert user?
 				}
@@ -398,8 +385,6 @@ public class ProtocolConnection extends Thread {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 			stopCamera();
-			
-			// finish();
 			return;
 		}
 	}
@@ -471,8 +456,6 @@ public class ProtocolConnection extends Thread {
 		this.remote_port = port;
 	}
 	public boolean startCamera() {
-		// recording variable may be different here.. check later.. rename if
-		// needed
 		if (sHolder == null) { // was surfaceView
 			return false;
 		}
@@ -498,16 +481,14 @@ public class ProtocolConnection extends Thread {
 		recorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
 		recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
 		recorder.setOutputFile(sender.getFileDescriptor());
-		//recorder.setOutputFile("/sdcard/preview.3gp");
 		if (this.vidQuality == 1) {
 			recorder.setVideoSize(176, 144); 
 			recorder.setVideoFrameRate(30);	
 		} else {
-			recorder.setVideoSize(352, 288); // CIF for h263, 16 lines for Group of
+			recorder.setVideoSize(352, 288); // CIF for h263, 16 lines for Group of Blocks (GOB)
 			recorder.setVideoFrameRate(30);	
 		}
-											// Blocks (GOB)
-		//recorder.setVideoSize(586, 480);
+											
 		recorder.setVideoEncoder(MediaRecorder.VideoEncoder.H263);
 		
 		
@@ -591,7 +572,7 @@ public class ProtocolConnection extends Thread {
 								.read(buffer, 14 + number, frame_size - number);
 					} catch (IOException e) {
 						e.printStackTrace();
-						break;
+						break; 
 					}
 					if (num < 0) {
 						try {

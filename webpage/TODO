@@ -1,11 +1,11 @@
-
-PING PONG keep alive with settings in config.php
-Multiple users behind NAT fix
-
+password encryption
+sound
+forgot password set up email and smtp server (use previously made email plugin)
+next page button for more than 9 active streams
+configuration via database with web interface - function to update setting (setting, value)
+automate installation on linux (rhel/cent/debian/ubuntu)(bash script) ?maybe Windows 7/2008?
+session number verification
 privacy (user side [phone and web])
-
-next page
-
+h264
 group chat
 
-audit code

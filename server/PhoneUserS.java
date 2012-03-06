@@ -25,7 +25,6 @@ import java.util.concurrent.*;
 
 // responds to Phone Response to set up UDP connection between Phone and Server [server end]
 public class PhoneUserS extends Thread {
-	private static String cvlc_path = "/usr/bin/cvlc";
 	private Process decoder_process;
 	private static String rtn = "\r\n";
 	private String username;
@@ -40,11 +39,14 @@ public class PhoneUserS extends Thread {
 	private ConcurrentHashMap<String, PhoneUserS> phoneUsers;
 	private ArrayList <viewUser> subscribedUsers; // users
 	Timer jpgOutputTimer;
+	Timer timeoutTimer; // n
+	Timer keepAliveTimer; // n/3
 	private Socket phoneSocket;
 	SQLDatabase sqldb;
 	String flvPath;
 	String jpgPath;
 	String serverAddress;
+	int timeout;
 	
 	public PhoneUserS(ConcurrentHashMap<String, PhoneUserS> pu, List<viewUser> vu, Socket sock, int[] ports) {
 		this.available = false;
@@ -60,6 +62,9 @@ public class PhoneUserS extends Thread {
 		this.serverAddress = "yapastream.com";
 		this.sqldb = new SQLDatabase();
 		this.jpgOutputTimer = new Timer();
+		this.timeoutTimer = new Timer();
+		this.keepAliveTimer = new Timer();
+		this.timeout = 30; // seconds
 	}
 	public void run() {
 		// read input sequence, store in variables
@@ -109,6 +114,7 @@ public class PhoneUserS extends Thread {
 						inputBlock = inputBlock + rtn + line;
 					}
 					line = receiver.readLine();
+					System.out.println("line: " + line);
 				}
 				if (inputBlock != "") System.out.println(phoneSocket.getInetAddress().toString()+ ":Phone:Received: " + inputBlock);
 				/*if ((this.decoder_process != null)  && (bre != null) && (bro != null)){
@@ -132,8 +138,8 @@ public class PhoneUserS extends Thread {
 			sender.close();
 			if (!(phoneSocket.isClosed())) phoneSocket.close();
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		
    		 return;
    		 
 	}
@@ -229,13 +235,35 @@ public class PhoneUserS extends Thread {
 							"Session: " + this.sessionId + rtn + rtn;
 			} else if (request.compareTo("terminate") == 0) {
 				this.terminate();
+			} else if (request.compareTo("pong") == 0) {
+				System.out.println("Received PONG");
+				resetTimeout();
+				response = "200 OK" + rtn +
+							"Session: " + this.sessionId + rtn + rtn;
 			} else {
 				System.out.println("Unknown command:" + request);
 			}
 		} catch (IOException ex) {
+		} catch (Exception ex) {
+		
 		}
 		return response;
+	}	
+	public void resetTimeout() { // received ping command, reset timer
+		try {
+			this.timeoutTimer.cancel();
+		} catch (IllegalStateException ex) {
+		
+		}
+		this.timeoutTimer = null;
+		this.timeoutTimer = new Timer();
+		this.timeoutTimer.scheduleAtFixedRate(new TimerTask() {
+			public void run() {
+				terminate();
+			}
+		}, this.timeout*1000, this.timeout*1000);	
 	}
+		
 	public void settings(String line) {
 	// update database with privacy settings
 		String[] settingSplit = line.split("[|]");
@@ -311,9 +339,37 @@ public class PhoneUserS extends Thread {
 							}
 						}
 					}, 1000, 15000);
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
+					
+					// TCP timeout for stream, drop user if we lose TCP stream
+					/*try {
+						this.keepAliveTimer.cancel();
+						this.timeoutTimer.cancel();
+					} catch (Exception e) {
+					
+					}*/
+					System.out.println("Starting timer");
+					this.keepAliveTimer.scheduleAtFixedRate(new TimerTask() {
+						public void run() {
+							PrintStream sender;
+							try {
+								sender = new PrintStream(phoneSocket.getOutputStream());
+								sender.println("100 PING" + rtn + "Session: " + sessionId + rtn + rtn);// sends ping command
+								
+								System.out.println("Sent PING");
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					}, this.timeout*1000/5, this.timeout*1000/5);
+					
+					this.timeoutTimer.scheduleAtFixedRate(new TimerTask() {
+						public void run() {
+							terminate();
+						}
+					}, this.timeout*1000, this.timeout*1000);
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
 				
 			} else {// else phone user they have not set up remote video and audio ports, unable to proceed.
 				System.out.println("NO VIDEO AUDIO SET UP");
@@ -334,6 +390,8 @@ public class PhoneUserS extends Thread {
 		this.phoneUsers.remove(this.username); // remove from Phone Users list
 		this.decoder_process.destroy(); // kill conversion process
 		this.jpgOutputTimer.cancel();
+		this.keepAliveTimer.cancel();
+		this.timeoutTimer.cancel();
 		try {
 			this.phoneSocket.close(); // close tcp connection
 		} catch (IOException ex) {

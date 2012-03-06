@@ -1,20 +1,3 @@
-/*Copyright (c) 2002-2011 "Yapastream,"
-Yapastream [http://yapastream.com]
-
-This file is part of Yapastream.
-
-Yapastream is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.*/
 package com.YapaStream;
 
 import java.io.*;
@@ -30,13 +13,14 @@ public class ProtoResponse {
 	private String sessionId;
 	private int audioPort;
 	private int videoPort;
-
+	private boolean pong;
 	static boolean debug = false;
 	
 	public ProtoResponse(BufferedReader i) {
 		this.input = i;
 		this.audioPort = 0;
 		this.videoPort = 0;
+		this.pong = false;
 		this.parseInput();
 	}
 
@@ -56,6 +40,9 @@ public class ProtoResponse {
 		return this.sessionId;
 	}
 
+	public boolean getPong() {
+		return this.pong;
+	}
 	private void parseInput() {
 		String line;
 		StringTokenizer lineToken = null;
@@ -88,15 +75,20 @@ public class ProtoResponse {
 			line = null;
 		}
 
-		if (line != null)
+		if (line != null) {
 			lineToken = new StringTokenizer(line);
+		}
 		while ((line != null) && (line.length() > 0)) {
 			Log.v("S", "read line: " + line);
 			if (lineToken != null) {
 				if (lineToken.hasMoreTokens()) {
 					describe = lineToken.nextToken().toLowerCase();
 					Log.v("S", "got describe: " + describe);
-					if (describe.compareTo("session:") == 0) {
+					
+					if (this.statusCode == 100) { // ping
+						this.pong= true;
+						Log.d("S", "Received PING");
+					} else if (describe.compareTo("session:") == 0) {
 						if (lineToken.hasMoreTokens()) {
 							this.sessionId = lineToken.nextToken();
 							
@@ -125,6 +117,7 @@ public class ProtoResponse {
 							this.videoPort = 0;
 						}
 					}
+					
 				}
 				try {
 					line = this.input.readLine();
@@ -136,7 +129,6 @@ public class ProtoResponse {
 
 			}
 		}
-		System.out.println("finished while");
 
 	}
 }
