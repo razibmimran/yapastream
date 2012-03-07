@@ -432,7 +432,6 @@ public class PhoneUserS extends Thread {
 		try {
 			this.phoneSocket.close(); // close tcp connection
 		} catch (IOException ex) {
-			
 		}
 		this.available = false;
 	}
