@@ -254,7 +254,7 @@ public class ProtocolConnection extends Thread {
 	// 0: not connected
 	public int authenticate() {
 		int retval = 0;
-
+		
 		if (this.serverSock != null) {
 			if (this.serverSock.isConnected()) {
 				if (this.phoneUser.isVerified() == false) {

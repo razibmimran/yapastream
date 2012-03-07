@@ -40,7 +40,7 @@ public class PhoneUserP  {
 	private boolean verified;
 	private String deviceServer;
 	private int devicePort;
-
+	
 	public PhoneUserP() {
 		this.verified = false;
 		this.setClientPorts();

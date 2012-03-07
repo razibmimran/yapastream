@@ -33,7 +33,7 @@ public class ProtoResponse {
 	private boolean pong;
 	private boolean terminate;
 	static boolean debug = false;
-
+	
 	public ProtoResponse(BufferedReader i) {
 		this.input = i;
 		this.audioPort = 0;

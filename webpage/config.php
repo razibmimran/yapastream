@@ -18,7 +18,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 static $MAX_USERNAME_LENGTH = 15;
 static $MIN_USERNAME_LENGTH = 4;
 static $MAX_PASSWORD_LENGTH = 1023;

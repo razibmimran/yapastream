@@ -47,7 +47,7 @@ public class PhoneUserS extends Thread {
 	String jpgPath;
 	String serverAddress;
 	int timeout;
-
+	
 	public PhoneUserS(ConcurrentHashMap<String, PhoneUserS> pu, List<viewUser> vu, Socket sock, int[] ports) {
 		this.available = false;
 		this.verified = false;
@@ -124,7 +124,7 @@ public class PhoneUserS extends Thread {
 				}*/
 				if (inputBlock != null) response = this.getResponse(inputBlock);
 				else response = null;
-
+				
 				if (response != null) {
 					sender.println(response);
 					System.out.println(phoneSocket.getInetAddress().toString() + ":Phone:Sent: " + response);
@@ -138,7 +138,7 @@ public class PhoneUserS extends Thread {
 			sender.close();
 			if (!(phoneSocket.isClosed())) phoneSocket.close();
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
    		 return;
    		 
@@ -251,6 +251,18 @@ public class PhoneUserS extends Thread {
 		return response;
 	}	
 	public void resetTimeout() { // received ping command, reset timer
+		int exit;
+		try {
+			// check if the decoder process is still active
+			exit = this.decoder_process.exitValue();
+			if (exit == 0) {
+				// restart the process
+				play();
+			}// else { // restart?
+			
+		} catch (IllegalThreadStateException ex) {
+			// do not need to restart the process
+		}
 		try {
 			this.timeoutTimer.cancel();
 		} catch (IllegalStateException ex) {

@@ -110,7 +110,7 @@ public class YapaStream extends Activity {
 					}
 				}
 		};
-
+			
 		this.loginButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				btnLogin(v);
@@ -264,13 +264,12 @@ public class YapaStream extends Activity {
 		this.spinVideoQuality = (Spinner) findViewById(R.id.spinVideoQuality);
 		this.spinPrivacy = (Spinner) findViewById(R.id.spinPrivacy);
 		this.tbAudio = (ToggleButton) findViewById(R.id.tbAudio);
-		this.tbAudio = (ToggleButton) findViewById(R.id.tbAudio);
 		this.etWebAddress.setText(yapaPref.getString("webaddress", ""));
 		this.spinVideoQuality.setSelection(yapaPref.getInt("videoquality", 0));
 		this.spinPrivacy.setSelection(yapaPref.getInt("privacy", 0));
 		this.tbAudio.setChecked(yapaPref.getBoolean("audio", true));
 		this.webAddress = yapaPref.getString("webaddress", "");
-		
+		this.privacy = yapaPref.getInt("privacy", 0);
 		return true;
 	}
 	public boolean loadUser() {
@@ -342,7 +341,6 @@ public class YapaStream extends Activity {
 		this.privacy =  this.spinPrivacy.getSelectedItemPosition();
 		this.savePref(aud, vidQuality, server, this.privacy);
 		this.getServerInfo();
-		Log.v("S", "asking for server info.");
 		showLogin();
 	}
 	public void btnSettingsCancel(View v) {
