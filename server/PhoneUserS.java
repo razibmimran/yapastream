@@ -47,7 +47,7 @@ public class PhoneUserS extends Thread {
 	String jpgPath;
 	String serverAddress;
 	int timeout;
-	
+
 	public PhoneUserS(ConcurrentHashMap<String, PhoneUserS> pu, List<viewUser> vu, Socket sock, int[] ports) {
 		this.available = false;
 		this.verified = false;
@@ -432,6 +432,7 @@ public class PhoneUserS extends Thread {
 		try {
 			this.phoneSocket.close(); // close tcp connection
 		} catch (IOException ex) {
+			
 		}
 		this.available = false;
 	}
