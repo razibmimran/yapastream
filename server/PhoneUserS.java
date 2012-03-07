@@ -226,7 +226,8 @@ public class PhoneUserS extends Thread {
 				response = "200 OK" + rtn +
 				"Session: " + this.sessionId + rtn + rtn;
 			} else if (request.compareTo("settings") == 0) { 
-				this.settings(line);
+				line = lineReader.readLine();
+				this.settings(input);
 				response = "200 OK" + rtn +
 				"Session: " + this.sessionId + rtn + rtn;
 			} else if (request.compareTo("play") == 0) {
@@ -264,14 +265,42 @@ public class PhoneUserS extends Thread {
 		}, this.timeout*1000, this.timeout*1000);	
 	}
 		
-	public void settings(String line) {
+	public void settings(String input) {
 	// update database with privacy settings
-		String[] settingSplit = line.split("[|]");
-		for (int i=0; i<settingSplit.length; i+=3) {
-			if ((settingSplit[i+1].compareTo("privacy") == 0) && (settingSplit[i+2] != null)) {
-				this.sqldb.addSetting(this.username, "privacy", settingSplit[i+2]);
-			}
+//		String[] settingSplit = line.split("[|]");
+//		for (int i=0; i<settingSplit.length; i+=3) {
+//			if ((settingSplit[i+1].compareTo("privacy") == 0) && (settingSplit[i+2] != null)) {
+//				this.sqldb.addSetting(this.username, "privacy", settingSplit[i+2]);
+//			}
+//		}
+		String line;
+		BufferedReader lineReader = new BufferedReader(new StringReader(input));
+		try {
+			line = lineReader.readLine();
+		} catch (Exception e) {
+			line = null;
 		}
+		String[] settingSplit;
+		//settingsSplit[0] is command/key
+		//settingsSplit[1] is value
+		while (line != null) {
+			settingSplit = line.split(":");
+                        if (line.compareTo("") == 0) break;
+                        if (settingSplit[0].compareTo("privacy") == 0) {
+				if (settingSplit[1] != null) {
+                      	           	this.sqldb.addSetting(this.username, "privacy", settingSplit[1]);
+				} else {
+					this.sqldb.addSetting(this.username, "privacy", "1");
+				}
+                         } else {
+                              // invalid setting
+                         }
+                	try { 
+			        line = lineReader.readLine();
+			} catch (Exception e) {
+				line = null;
+			}
+                 }
 	}
 	public void play() {
 		if (this.verified) {
@@ -380,6 +409,14 @@ public class PhoneUserS extends Thread {
 		}
 	}
 	public void terminate() {
+		PrintStream sender;
+		try {
+			sender = new PrintStream(phoneSocket.getOutputStream());
+			sender.println("410 TERMINATE");
+			sender.close();
+			sender = null;
+		} catch (Exception e) {
+		}
 		// phone terminated connection, send respones to all viewers 410 Gone and Terminate session
 		this.sqldb.partUser(this.username, this.sessionId);
 		for (int i=0; i<subscribedUsers.size(); i++) {

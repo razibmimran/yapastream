@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS `streams` (
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(32) NOT NULL,
-  `password` varchar(32) NOT NULL,
+  `password` varchar(1023) NOT NULL,
   `email` varchar(64) NOT NULL,
   `location` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`username`),

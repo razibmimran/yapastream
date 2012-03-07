@@ -19,21 +19,38 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 class DeviceInfo {
-	private $serverAddress;
-	private $serverPort;
-	public function DeviceInfo() {
-		require("config.php");
-		$this->serverAddress = $deviceAddress;
-		$this->serverPort = $devicePort;
-	}
-	public function getDeviceInfo() {
-		$this->sendSuccess($this->serverAddress, $this->serverPort);
-	}
+        private $serverAddress;
+        private $serverPort;
+	private $rtn = "\r\n";
+		private $serverTimeout;
+        public function DeviceInfo() {
+                require("config.php");
+                $this->serverAddress = $deviceAddress;
+                $this->serverPort = $devicePort;
+				$this->serverTimeout = $deviceTimeout;
+        }
+        public function getDeviceInfo() {
+                $this->sendSuccess();
+        }
 	public function sendError($errCode, $errMsg) {
-		echo "ERROR|" . $errCode . "|Error|" . $errMsg;
+		echo "ERROR" . $this->rtn . 
+			"Code:" . $errCode . $this->rtn . 
+			"Message:" . $errMsg . $this->rtn; 
 	}
-	public function sendSuccess($address, $port) {
-		echo "SUCCESS|" . $address . "|" . $port;
-	}
+/*        public function sendError($errCode, $errMsg) {
+                echo "ERROR|" . $errCode . "|Error|" . $errMsg;
+        }*/
+		
+		/* previously:
+		public function sendSuccess($address, $port) {
+                echo "SUCCESS|" . $address . "|" . $port;
+        }
+		*/
+        public function sendSuccess() {
+                echo "SUCCESS" . $this->rtn . 
+				"Address: " . $this->serverAddress . $this->rtn . 
+				"Port: " . $this->serverPort . $this->rtn . 
+				"Timeout: " . $this->serverTimeout . $this->rtn;
+        }
 }
 ?>

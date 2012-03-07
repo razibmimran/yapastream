@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 static $MAX_USERNAME_LENGTH = 15;
 static $MIN_USERNAME_LENGTH = 4;
-static $MAX_PASSWORD_LENGTH = 31;
+static $MAX_PASSWORD_LENGTH = 1023;
 static $MIN_PASSWORD_LENGTH = 6;
 static $webServer = "yapastream.com";
 static $deviceAddress = "yapastream.com";
@@ -33,5 +33,5 @@ static $streamsFolder = "streams";
 static $jpgFolder = "jpg";
 static $videoWidth = "352";
 static $videoHeight = "288";
-
+static $deviceTimeout = 30; // number of no-response seconds before terminating user
 ?>

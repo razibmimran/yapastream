@@ -1,9 +1,27 @@
+/*Copyright (c) 2002-2011 "Yapastream,"
+Yapastream [http://yapastream.com]
+
+This file is part of Yapastream.
+
+Yapastream is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.*/
 package com.YapaStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.*;
 
 import com.YapaStream.R;
 
@@ -45,6 +63,7 @@ public class YapaStream extends Activity {
 	private Handler handler;
 	private EditText etWebAddress;
 	private String serverAddress;
+	private int serverTimeout;
 	private int serverPort;
 	private int privacy; // 0=broadcast;1=public,2=private
 	private String webAddress;
@@ -83,6 +102,11 @@ public class YapaStream extends Activity {
 						alertboxToLogin(textSplit[1], textSplit[2]);
 					} else if (textSplit[0].compareTo("alertboxInvalidPassword") == 0) {
 						alertboxInvalidPassword(textSplit[1], textSplit[2]);
+					}else if (textSplit[0].compareTo("reconnect") == 0) {
+						// fix: should not hide and reshow screen
+						Logout();
+						
+						Login();
 					}
 				}
 		};
@@ -439,6 +463,7 @@ public class YapaStream extends Activity {
 			this.protoConn.setPrivacy(this.privacy);
 			this.protoConn.setServerAddress(this.serverAddress);
 			this.protoConn.setServerPort(this.serverPort);
+			this.protoConn.setTimeout(this.serverTimeout);
 			this.begin();
 		} else {
 			if (!(username.matches("[a-zA-Z0-9]*"))) {
@@ -477,6 +502,7 @@ public class YapaStream extends Activity {
 			Log.v("S", ex.getMessage());
 		}
 	} 
+	
 	public void postError(String error) {
 		final String errMsg = this.protoConn.getErrorMsg();
 		if (handler != null) {
@@ -566,8 +592,28 @@ public class YapaStream extends Activity {
 	// make a thread with a cancel dialog
 	public void signup(String username, String password, String email) {
 		URL signupUrl = null;
+		String encryptPass;
+                MessageDigest md;
+                try {
+                        md= MessageDigest.getInstance("SHA-512");
+                        md.update(password.getBytes());
+                        byte[] mb = md.digest();
+                        String out = "";
+                        for (int i = 0; i < mb.length; i++) {
+                                byte temp = mb[i];
+                                String s = Integer.toHexString(new Byte(temp));
+                                while (s.length() < 2) {
+                                        s = "0" + s;
+                                }
+                                s = s.substring(s.length() - 2);
+                                out += s;
+                        }
+                        encryptPass = out;
+                } catch (NoSuchAlgorithmException e) {
+                        encryptPass = null;
+		}
 		try {
-			signupUrl = new URL("http://" + this.webAddress + "/?signup=1&device=androidapplication&username=" + username + "&password=" + password + "&email=" + email);
+			signupUrl = new URL("http://" + this.webAddress + "/?signup=1&device=androidapplication&username=" + username + "&password=" + encryptPass + "&email=" + email);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
@@ -660,28 +706,71 @@ public class YapaStream extends Activity {
 			try {
 				uc = webUrl.openConnection();
 				if (uc != null) {
-			        BufferedReader in;
-					in = new BufferedReader(new InputStreamReader(uc.getInputStream()));
+			        BufferedReader input;
+			        input = new BufferedReader(new InputStreamReader(uc.getInputStream()));
 			        String inputLine;
-			        while ((inputLine = in.readLine()) != null) {
-			        	Log.v("S", inputLine);
-			        	String[] splitInput = inputLine.split("[|]");
+			        this.serverTimeout = 0; // no timeout
+			        try {   
+	                	 inputLine = input.readLine();
+	                 } catch (Exception e) {
+	                	 inputLine = null;
+	                 } 
+			       // while ((inputLine = in.readLine()) != null) {
+			        //Log.v("S", inputLine);
+			        	/*String[] splitInput = inputLine.split("[|]");
 			        	if (splitInput[0].compareTo("SUCCESS") == 0) {
-			        		// 1 = IP/HOST; 2 = PORT
-			        		if (splitInput[1] != null) {
-			        			this.serverAddress = splitInput[1];
-			        			if (splitInput[2] != null) {
-			        				this.serverPort = Integer.parseInt(splitInput[2]);
-			        			} else {
-			        				this.serverPort = 10083; // default port
-			        			}
-			        		} else {// default values
-			        			this.serverAddress = "yapastream.com";
-			        			this.serverPort = 10083;
-			        		}
+			        		/int maxIter = (splitInput.length > 15) ? 15 : splitInput.length;
+							for (int i=0; i<maxIter; i++) {
+								if (splitInput[i] != null) {
+									String[] left_right = splitInput[1].split("[:]");
+									if (left_right[0].toLowerCase() == "address") {
+										this.serverAddress = left_right[1];
+									} else if (left_right[0].toLowerCase() == "port") {
+										this.serverPort = Integer.parseInt(left_right[1]);
+									} else if (left_right[0].toLowerCase() == "timeout") {
+										this.serverTimeout = Integer.parseInt(left_right[1]);
+									}
+								}
+							}*/
+
+	                 Log.v("S", "Received input: " + inputLine);
+			        	if (inputLine.compareTo("SUCCESS") == 0) {
+			                 try {   
+			                	 inputLine = input.readLine();
+			                 } catch (Exception e) {
+			                	 inputLine = null;
+			                 } 
+			                 String[] settingSplit;  
+			                 //settingsSplit[0] is command/key
+			                 //settingsSplit[1] is value
+
+			                 Log.v("S", "Fetching address");
+			                 while (inputLine != null) {
+			                         settingSplit = inputLine.split(":");
+			                         if (settingSplit[0].toLowerCase() == "address") {
+											this.serverAddress = settingSplit[1];
+										} else if (settingSplit[0].toLowerCase() == "port") {
+											this.serverPort = Integer.parseInt(settingSplit[1]);
+										} else if (settingSplit[0].toLowerCase() == "timeout") {
+											this.serverTimeout = Integer.parseInt(settingSplit[1]);
+										}
+			                         
+
+					                 Log.v("S", "Received input: " + inputLine);
+					                 
+			                         try {   
+					                	 inputLine = input.readLine();
+					                 } catch (Exception e) {
+					                	 inputLine = null;
+					                 } 
+					                 
+			                 }
+							if (this.serverAddress == null) this.serverAddress = "yapastream.com";
+                            if ((this.serverPort == 0) || (this.serverPort > 65025) || (this.serverPort < 0)) this.serverPort = 10083; // default port
+
 		        			Log.v("S", "Server address set to " + this.serverAddress);
 		        			Log.v("S", "Server port set to " + this.serverPort);
-			        	} else if (splitInput[0].compareTo("ERROR") == 0) {
+			        	} else if (inputLine.compareTo("ERROR") == 0) {
 			        		/*int errCode = 0;
 			        		errCode = Integer.parseInt(splitInput[1]);
 			        		String errStr;
@@ -690,10 +779,27 @@ public class YapaStream extends Activity {
 			        				errStr = "An unknown error has occured.";
 			     
 			        		}*/
-			        		this.alertboxToForgotPassword("Error",  splitInput[3]);
+
+			                 String[] settingSplit;  
+			                 String errCode;
+			                 String message = "";
+			        		while (inputLine != null) {
+		                         settingSplit = inputLine.split(":");
+		                         if (settingSplit[0].toLowerCase() == "code") {
+										errCode = settingSplit[1];
+									} else if (settingSplit[0].toLowerCase() == "message") {
+										message = settingSplit[1];
+									} 
+		                         try {   
+				                	 inputLine = input.readLine();
+				                 } catch (Exception e) {
+				                	 inputLine = null;
+				                 } 
+			        		}
+			        		this.alertboxToForgotPassword("Error",  message);
 			        	}
-			        }
-			        in.close();
+			       // }
+			        	input.close();
 				}
 			} catch (Exception e) {
 				e.printStackTrace();

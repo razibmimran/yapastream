@@ -1,3 +1,20 @@
+/*Copyright (c) 2002-2011 "Yapastream,"
+Yapastream [http://yapastream.com]
+
+This file is part of Yapastream.
+
+Yapastream is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.*/
 package com.YapaStream;
 
 import java.io.*;
@@ -14,6 +31,7 @@ public class ProtoResponse {
 	private int audioPort;
 	private int videoPort;
 	private boolean pong;
+	private boolean terminate;
 	static boolean debug = false;
 	
 	public ProtoResponse(BufferedReader i) {
@@ -21,6 +39,7 @@ public class ProtoResponse {
 		this.audioPort = 0;
 		this.videoPort = 0;
 		this.pong = false;
+		this.terminate=false;
 		this.parseInput();
 	}
 
@@ -39,7 +58,9 @@ public class ProtoResponse {
 	public String getSessionId() {
 		return this.sessionId;
 	}
-
+	public boolean getTerminate() {
+		return this.terminate;
+	}
 	public boolean getPong() {
 		return this.pong;
 	}
@@ -88,6 +109,8 @@ public class ProtoResponse {
 					if (this.statusCode == 100) { // ping
 						this.pong= true;
 						Log.d("S", "Received PING");
+					//} else if (this.statusCode == 601) { // ping
+					//		this.terminate= true;
 					} else if (describe.compareTo("session:") == 0) {
 						if (lineToken.hasMoreTokens()) {
 							this.sessionId = lineToken.nextToken();

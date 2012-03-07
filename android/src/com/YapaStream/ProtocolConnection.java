@@ -1,7 +1,25 @@
+/*Copyright (c) 2002-2011 "Yapastream,"
+Yapastream [http://yapastream.com]
+
+This file is part of Yapastream.
+
+Yapastream is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.*/
 package com.YapaStream;
 
 import java.net.*;
 import java.io.*;
+import java.util.*;
 
 import android.hardware.Camera;
 import android.media.MediaRecorder;
@@ -44,6 +62,8 @@ public class ProtocolConnection extends Thread {
 	private SurfaceHolder sHolder;
 	private boolean ended;
 	private Handler handler;
+	private int timeout;
+	private Timer timeoutTimer;
 	LocalSocket receiver, sender;
 	LocalServerSocket lss;
 	int obuffering;
@@ -85,6 +105,7 @@ public class ProtocolConnection extends Thread {
 		this.ported = false;
 		this.ended = false;
 		int attempts = 0;
+		this.timeout = 0;
 		// Initialize connection
 		while (this.ended == false) {
 			if (this.connected == false)  {
@@ -159,7 +180,10 @@ public class ProtocolConnection extends Thread {
 				response = new ProtoResponse(this.input);
 				if (response.getPong() == true) { // received 100 PING, send PONG
 					this.pong();
+					this.resetTimeout();
 					Log.d("S","Sent PONG");
+				} else if (response.getStatusCode() == 410) {
+					this.timeoutRun(); // reconnect
 				}
 				response = null;
 			}
@@ -290,9 +314,9 @@ public class ProtocolConnection extends Thread {
 				+ this.phoneUser.getLocalVideoPort());
 	}
 	public void settings() {
-		this.sendCommand("SETTINGS " + "|" + "privacy" + "|" + Integer.toString(this.privacy)); 
+		this.sendCommand("SETTINGS " + rtn +
+				"privacy:" + Integer.toString(this.privacy)); 
 				//"|" + "SETTINGS" + "|" + );
-		
 	}
 
 	public void end() {
@@ -337,12 +361,57 @@ public class ProtocolConnection extends Thread {
 		this.ported = false;
 		this.ended = true;
 		try {
+			this.timeoutTimer.cancel();
+		} catch (Exception e) {
+		}
+		try {
 			this.lss.close();
 			this.receiver.close();
 			this.sender.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	 public int timeoutRun() {
+		 //if (tbAutoReconnect == true) {
+                if (this.handler != null) {
+                        Message msg = handler.obtainMessage();
+                        msg.obj = "reconnect";
+                        handler.sendMessage(msg);
+                }
+			//} else { // go to login screen 
+			//		Logout();
+			//}
+		return 0;
+	}
+    	public void startTimeout() {
+  		if (this.timeout > 0) {
+	 		this.timeoutTimer = null;
+	 		this.timeoutTimer = new Timer();
+	 
+	 		this.timeoutTimer.scheduleAtFixedRate(new TimerTask() {
+				public void run() {// if it hasn't received a ping in the timeout period 
+					timeoutRun();
+				}
+	 		}, this.timeout*1000, this.timeout*1000);     
+ 		} 
+	}
+
+    	public void resetTimeout() {
+  		if (this.timeout > 0) {
+			try {
+				this.timeoutTimer.cancel();
+			} catch (Exception e) {
+			}
+	 		this.timeoutTimer = null;
+	 		this.timeoutTimer = new Timer();
+	 
+	 		this.timeoutTimer.scheduleAtFixedRate(new TimerTask() {
+				public void run() {// if it hasn't received a ping in the timeout period 
+					timeoutRun();
+				}
+	 		}, this.timeout*1000, this.timeout*1000);     
+ 		} 
 	}
 	public void setHandler(Handler h) {
 		this.handler = h;
@@ -451,6 +520,9 @@ public class ProtocolConnection extends Thread {
 //	}
 	public void setServerAddress(String server) {
 		this.remote_server = server;
+	}
+	public void setTimeout(int seconds) {
+		this.timeout = seconds;
 	}
 	public void setServerPort(int port) {
 		this.remote_port = port;

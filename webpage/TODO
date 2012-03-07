@@ -1,6 +1,5 @@
-password encryption
-sound
-multiple users behind NAT bug
+sound/multiple users behind NAT bug
+additional password encryption to prevent replay 
 forgot password set up email and smtp server (use previously made email plugin)
 next page button for more than 9 active streams
 configuration via database with web interface - function to update setting (setting, value)
