@@ -37,15 +37,6 @@ class DeviceInfo {
 			"Code:" . $errCode . $this->rtn . 
 			"Message:" . $errMsg . $this->rtn; 
 	}
-/*        public function sendError($errCode, $errMsg) {
-                echo "ERROR|" . $errCode . "|Error|" . $errMsg;
-        }*/
-		
-		/* previously:
-		public function sendSuccess($address, $port) {
-                echo "SUCCESS|" . $address . "|" . $port;
-        }
-		*/
         public function sendSuccess() {
                 echo "SUCCESS" . $this->rtn . 
 				"Address: " . $this->serverAddress . $this->rtn . 

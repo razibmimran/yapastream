@@ -55,7 +55,7 @@ public class SQLDatabase {
 	 			try {
 	 		         Class.forName(DRIVER); 
 	 		         con = DriverManager.getConnection(URL, USER, PASSWORD);
-					 
+				 
 	 		      }
 	 		      catch(ClassNotFoundException e) {
 	 		         System.out.println("Driver not found. Be sure CLASSPATH is set to mysql connector (eg. export CLASSPATH=/usr/share/java/mysql-connector-java-5.1.17-bin.jar:$CLASSPATH) " + e.getMessage());

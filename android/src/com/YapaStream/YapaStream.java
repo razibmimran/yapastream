@@ -110,7 +110,7 @@ public class YapaStream extends Activity {
 					}
 				}
 		};
-			
+
 		this.loginButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				btnLogin(v);

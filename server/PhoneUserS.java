@@ -124,7 +124,7 @@ public class PhoneUserS extends Thread {
 				}*/
 				if (inputBlock != null) response = this.getResponse(inputBlock);
 				else response = null;
-				
+
 				if (response != null) {
 					sender.println(response);
 					System.out.println(phoneSocket.getInetAddress().toString() + ":Phone:Sent: " + response);
