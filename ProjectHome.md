@@ -1,0 +1,1 @@
+The project provides the android application source code, the web source code, along with the server for allowing multiple users connections and API integration.
